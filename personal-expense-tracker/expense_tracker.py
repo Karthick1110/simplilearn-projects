@@ -83,16 +83,38 @@ def compareBudget():
     if (total_expense > total_budget):
         print("Warning : your total expense is greater than your monthly buget",end='\n')
     else:
-        print(f'you have {total_budget-total_expense} left for the month')
+        print(f'you have {total_budget-total_expense} left for the month',end='\n')
+
+"""
+save expense in the excel
+"""
+
+def saveExpense():
+    f = open('./personal-expense-tracker/hello.csv','w+')
+    for iterate_expense in expenses:
+       for i,key in enumerate(iterate_expense):
+            if i>=3:
+                f.write(iterate_expense[key])
+            else:
+                f.write(iterate_expense[key] + ',')    
+    f.close
+
+def readExpenses():
+    fread= open('./personal-expense-tracker/hello.csv','r')
+    lines = fread.readlines()
+    for z in lines:
+        literals = z.split(',')
+        expenses.append(dict(expense_date=literals[0],expense_category = literals[1],expense_amount=literals[2],description = literals[3]))
 
 def interactiveMenu():
         x=0;
+        readExpenses()
         while x!=5:
-            print("Enter the following option to continue:" ," Add expense".ljust(5),':', 1,
+            print("\nEnter the following option to continue:" ," Add expense".ljust(5),':', 1,
                   ", View expenses".ljust(5),':', 2,
                   ", Track budget".ljust(5),':', 3,
                   ", Save Expenses ".ljust(5), ':', 4,", Exit ".ljust(5),':', 5)
-            x = int(input("Choose the option : "))
+            x = int(input("\tChoose the option : "))
             if x == 1:
                 setExpense()
             elif x ==2:
@@ -100,9 +122,10 @@ def interactiveMenu():
             elif x == 3:
                 setAndTrackBudget()
             elif x ==4:
-                print("Implement save expense is inprogress")
+                saveExpense()
             else:
                 print("Thank you for choosing our program..")
+
 if __name__ == "__main__":
     interactiveMenu()
 
