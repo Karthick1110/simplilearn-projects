@@ -11,18 +11,27 @@ Example: {'date': '2024-09-18', 'category': 'Food', 'amount': 15.50, 'descriptio
 
 '''
 expenses = []
+expenses_questionare = dict(expense_date="Enter your expense date in the below format YYYY-MM-DD : ",
+                            expense_category="Enter category of the expense, such as Food or Travel:",
+                            expense_amount="Enter the amount spent:",
+                            description="Enter the description of the expense:")
+total_budget=0;
+total_expense=0;
 
 def getExpenseDetails():
-    expense_date = input("Enter your expense date in the below format YYYY-MM-DD : ")
-    print("Entered date is  : ",expense_date)
-    expense_category = input("Enter category of the expense, such as Food or Travel:")
-    print("Entered Category is: " + expense_category)
-    expense_amount = input("Enter the amount spent:")
-    print("Entered Category is: " + expense_category)
-    expense_description = input("Enter the description of the expense:")
-    print("Entered Description is: " + expense_description)
-    return dict(date=expense_date,category=expense_category,amount = expense_amount, description = expense_description)
-    
+    global total_expense;
+    store_values = {}
+    for key in expenses_questionare:
+        values = input(expenses_questionare[key])
+        if len(values)>0:
+            if key == 'expense_amount':
+                total_expense = total_expense + int(values)
+            store_values.update({key:values})
+        else:
+            print("Invalid / Empty values, please enter your input again")
+            values = input(expenses_questionare[key])
+    print(store_values)
+    return dict(store_values)
 
 """
     **2. View expenses:**      
@@ -31,19 +40,76 @@ def getExpenseDetails():
         * Validate the data before displaying it  
             - [  ] If any required details (date, category, amount, or description) are missing, skip the entry or notify the user that it’s incomplete
 """
+expenses_key = ('date','category','amount','description')
 def viewExpenses():
-    for x in expenses:
-        print(x)
+   counter = 0;
+   for iterate_expense in expenses:
+       counter = counter+1
+       print(f'Expense Id'.ljust(13),f' : {counter}')
+       for key in iterate_expense:
+            print(f'{key}'.ljust(20),f' : {iterate_expense[key]}')
 
+def setExpense():
+    inpu = 'y'
+    while True:
+        if inpu == 'y':
+            expenses.append(getExpenseDetails())
+            inpu = input('Do you wish to enter an expense ? (y or n) ')
+            continue;
+        else:
+            break;
 
+"""
+    3. Set and track the budget:
+        • Create a function that allows the user to input a monthly budget. Prompt the
+        user to:
+            o  Enter the total amount they want to budget for the month
+        Create another function that calculates the total expenses recorded so far
+            o  Compare the total with the user’s monthly budget
+            o  If the total expenses exceed the budget, display a warning (Example:
+        You have exceeded your budget!)
+            o  If the expenses are within the budget, display the remaining balance
+        (Example: You have 150 left for the month)
+"""
 
-while True:
-    inpu = input('Dpo you wish to enter an expense ? (y or n)')
-    if inpu == 'y':
-        expenses.append(getExpenseDetails())
-        continue;
+def setAndTrackBudget():
+    global total_budget;
+    values = int(input("Enter your your total budget for the month : "))
+    ## 
+    total_budget = values
+    compareBudget()
+
+def compareBudget():
+    if (total_expense > total_budget):
+        print("Warning : your total expense is greater than your monthly buget",end='\n')
     else:
-        break;
+        print(f'you have {total_budget-total_expense} left for the month')
 
-if len(expenses)>0:
+def interactiveMenu():
+        x=0;
+        while x!=5:
+            print("Enter the following option to continue:" ," Add expense".ljust(5),':', 1,
+                  ", View expenses".ljust(5),':', 2,
+                  ", Track budget".ljust(5),':', 3,
+                  ", Save Expenses ".ljust(5), ':', 4,", Exit ".ljust(5),':', 5)
+            x = int(input("Choose the option : "))
+            if x == 1:
+                setExpense()
+            elif x ==2:
+                viewExpenses()
+            elif x == 3:
+                setAndTrackBudget()
+            elif x ==4:
+                print("Implement save expense is inprogress")
+            else:
+                print("Thank you for choosing our program..")
+if __name__ == "__main__":
+    interactiveMenu()
+
+
+"""
+    expenses.append(dict(date='2024-09-18',category='Food',amount=15.50))
+    setExpense()
     viewExpenses()
+    setAndTrackBudget()
+"""
